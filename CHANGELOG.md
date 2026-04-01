@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.2.0 - 2026-04-01
+
+### Changed
+
+- Promoted the transport migration to the next minor publish line for `@soulwax/d-fi-core`, keeping the scoped package metadata and published `types/` subpath aligned for npm consumers.
+- Reused Spotify anonymous tokens until expiry so Spotify URL parsing does not refetch a token on every request during a single process lifetime.
+- Documented direct type imports from `@soulwax/d-fi-core/types` in the README for downstream TypeScript consumers.
+
+### Fixed
+
+- Stabilized live AVA coverage by explicitly skipping auth-gated and upstream-unavailable fixtures instead of failing the full publish verification run.
+- Excluded shared test helpers from AVA discovery so release validation exits cleanly with the real test status.
+
 ## 2.1.0 - 2026-04-01
 
 ### Changed

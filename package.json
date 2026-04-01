@@ -1,6 +1,6 @@
 {
   "name": "@soulwax/d-fi-core",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Core module for d-fi.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
