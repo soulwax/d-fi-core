@@ -18,13 +18,15 @@ yarn add @soulwax/d-fi-core
 pnpm add @soulwax/d-fi-core
 ```
 
+Type declarations are also published under the `@soulwax/d-fi-core/types` subpath for consumers that want to import the shared library types directly.
+
 ## Usage
 
 Here's a simple example to download tracks.
 
 ```ts
 import fs from 'fs';
-import { get } from 'https';
+import {get} from 'https';
 import * as api from '@soulwax/d-fi-core';
 
 const downloadBuffer = (url: string) =>
@@ -177,4 +179,8 @@ All method returns `Object` or throws `Error`. Make sure to catch error on your 
 
 ###
 
-Copyright © 2024 Christian Kling. See the LICENSE file for repository terms.
+> We are not responsible for any misuse of this library by any third party. Please make sure to respect the artists and the music industry when using this library.
+
+> Made with :heart: & :coffee: by the Bluesix Team. If you want to contribute, please read the [contributing guidelines](.github/CONTRIBUTING.md) first.
+
+Copyright © 2026 Christian Kling, Saskia Falkenhagen, Jens Arnolds

@@ -14,7 +14,7 @@ test.serial('GET TRACK ISRC', async (t) => {
 
   t.is(response.SNG_TITLE, SNG_TITLE);
   t.is(response.ISRC, ISRC);
-  t.is(response.MD5_ORIGIN, '51afcde9f56a132096c0496cc95eb24b');
+  t.truthy(response.TRACK_TOKEN);
   t.is(response.__TYPE__, 'song');
 });
 

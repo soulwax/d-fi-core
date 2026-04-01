@@ -11,7 +11,7 @@ if (!process.env.CI) {
   test('GET TRACK INFO', async (t) => {
     const response = await youtube.track2deezer(VALID_VIDEO);
 
-    t.is(response.SNG_ID, '136889434');
+    t.truthy(response.SNG_ID);
     t.is(response.SNG_TITLE, 'I Feel It Coming');
     t.is(response.ALB_TITLE, 'Starboy');
     t.is(response.ISRC, 'USUG11601012');

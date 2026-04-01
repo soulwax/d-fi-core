@@ -57,7 +57,8 @@
       "ts"
     ],
     "files": [
-      "!dist"
+      "!dist",
+      "!__tests__/helpers.ts"
     ],
     "require": [
       "ts-node/register"

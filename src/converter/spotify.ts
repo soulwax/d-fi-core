@@ -13,6 +13,12 @@ type tokensType = {
   isAnonymous: true;
 };
 
+let anonymousToken: tokensType | null = null;
+let anonymousTokenPromise: Promise<tokensType> | null = null;
+
+const hasValidAnonymousToken = (): boolean =>
+  Boolean(anonymousToken && anonymousToken.accessTokenExpirationTimestampMs - 60_000 > Date.now());
+
 /**
  * Parse offset number
  * @param {String} next next page url
@@ -42,11 +48,26 @@ export const spotifyApi = new SpotifyWebApi();
  * @returns {tokensType}
  */
 export const setSpotifyAnonymousToken = async () => {
-  const data = await getJson<tokensType>(
-    'https://open.spotify.com/get_access_token?reason=transport&productType=embed',
-  );
-  spotifyApi.setAccessToken(data.accessToken);
-  return data;
+  if (hasValidAnonymousToken() && anonymousToken) {
+    spotifyApi.setAccessToken(anonymousToken.accessToken);
+    return anonymousToken;
+  }
+
+  if (!anonymousTokenPromise) {
+    anonymousTokenPromise = getJson<tokensType>(
+      'https://open.spotify.com/get_access_token?reason=transport&productType=embed',
+    )
+      .then((data) => {
+        anonymousToken = data;
+        spotifyApi.setAccessToken(data.accessToken);
+        return data;
+      })
+      .finally(() => {
+        anonymousTokenPromise = null;
+      });
+  }
+
+  return await anonymousTokenPromise;
 };
 
 /**

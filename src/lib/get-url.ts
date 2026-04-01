@@ -123,15 +123,17 @@ export const getTrackDownloadUrl = async (
   }
 
   // Fallback to the old method
-  const filename = getSongFileName(track, quality); // encrypted file name
-  const url = `https://e-cdns-proxy-${track.MD5_ORIGIN[0]}.dzcdn.net/mobile/1/${filename}`;
-  const fileSize = await testUrl(url);
-  if (fileSize > 0) {
-    return {
-      trackUrl: url,
-      isEncrypted: url.includes('/mobile/') || url.includes('/media/'),
-      fileSize: fileSize,
-    };
+  if (track.MD5_ORIGIN) {
+    const filename = getSongFileName(track, quality); // encrypted file name
+    const url = `https://e-cdns-proxy-${track.MD5_ORIGIN[0]}.dzcdn.net/mobile/1/${filename}`;
+    const fileSize = await testUrl(url);
+    if (fileSize > 0) {
+      return {
+        trackUrl: url,
+        isEncrypted: url.includes('/mobile/') || url.includes('/media/'),
+        fileSize: fileSize,
+      };
+    }
   }
   if (wrongLicense) {
     throw wrongLicense;

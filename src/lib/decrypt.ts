@@ -8,6 +8,10 @@ const md5 = (data: string, type: crypto.Encoding = 'ascii') => {
 };
 
 export const getSongFileName = ({MD5_ORIGIN, SNG_ID, MEDIA_VERSION}: trackType, quality: number) => {
+  if (!MD5_ORIGIN) {
+    throw new Error(`Missing MD5_ORIGIN for track ${SNG_ID}`);
+  }
+
   const step1 = [MD5_ORIGIN, quality, SNG_ID, MEDIA_VERSION].join('¤');
 
   let step2 = md5(step1) + '¤' + step1 + '¤';
