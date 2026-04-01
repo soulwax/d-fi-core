@@ -1,4 +1,4 @@
-import axios from '../lib/request';
+import client from '../lib/request';
 import lru from './cache';
 
 /**
@@ -15,7 +15,7 @@ export const request = async (body: object, method: string) => {
 
   const {
     data: {error, results},
-  } = await axios.post<any>('/gateway.php', body, {params: {method}});
+  } = await client.post<any>('/gateway.php', body, {params: {method}});
 
   if (Object.keys(results).length > 0) {
     lru.set(cacheKey, results);
@@ -40,7 +40,7 @@ export const requestLight = async (body: object, method: string) => {
 
   const {
     data: {error, results},
-  } = await axios.post<any>('https://www.deezer.com/ajax/gw-light.php', body, {
+  } = await client.post<any>('https://www.deezer.com/ajax/gw-light.php', body, {
     params: {method, api_version: '1.0'},
   });
   if (Object.keys(results).length > 0) {
@@ -66,7 +66,7 @@ export const requestGet = async (method: string, params: Record<string, any> = {
 
   const {
     data: {error, results},
-  } = await axios.get<any>('/gateway.php', {params: {method, ...params}});
+  } = await client.get<any>('/gateway.php', {params: {method, ...params}});
 
   if (Object.keys(results).length > 0) {
     lru.set(cacheKey, results);
@@ -87,7 +87,7 @@ export const requestPublicApi = async (slug: string) => {
     return cache;
   }
 
-  const {data} = await axios.get<any>('https://api.deezer.com' + slug);
+  const {data} = await client.get<any>('https://api.deezer.com' + slug);
 
   if (data.error) {
     const errorMessage = Object.entries(data.error).join(', ');

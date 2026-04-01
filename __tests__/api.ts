@@ -167,7 +167,7 @@ if (process.env.CI) {
   //   const track = await api.getTrackInfo('912254892');
   //   const trackData = await getTrackDownloadUrl(track, 1);
   //   if (!trackData) throw new Error("Selected track+quality are unavailable");
-  //   const {data} = await axios.get(trackData.trackUrl, {responseType: 'arraybuffer'});
+  //   const data = await getBuffer(trackData.trackUrl);
 
   //   t.truthy(data);
   //   t.true(Buffer.isBuffer(data));
