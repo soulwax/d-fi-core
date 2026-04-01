@@ -7,7 +7,15 @@ The npm package page is <https://www.npmjs.com/package/@soulwax/d-fi-core>.
 ## Installation
 
 ```bash
+npm i @soulwax/d-fi-core
+```
+
+```bash
 yarn add @soulwax/d-fi-core
+```
+
+```bash
+pnpm add @soulwax/d-fi-core
 ```
 
 ## Usage
@@ -16,7 +24,7 @@ Here's a simple example to download tracks.
 
 ```ts
 import fs from 'fs';
-import {get} from 'https';
+import { get } from 'https';
 import * as api from '@soulwax/d-fi-core';
 
 const downloadBuffer = (url: string) =>
