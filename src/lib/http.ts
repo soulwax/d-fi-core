@@ -241,7 +241,7 @@ const requestRaw = async (config: RawRequestConfig, redirectCount = 0): Promise<
 };
 
 const buildUrl = (url: string, baseURL?: string, params?: HttpQuery): URL => {
-  const parsedUrl = baseURL ? new URL(url, baseURL) : new URL(url);
+  const parsedUrl = new URL(resolveUrl(url, baseURL));
 
   if (params) {
     for (const [key, input] of Object.entries(params)) {
@@ -258,6 +258,14 @@ const buildUrl = (url: string, baseURL?: string, params?: HttpQuery): URL => {
   }
 
   return parsedUrl;
+};
+
+const resolveUrl = (url: string, baseURL?: string): string => {
+  if (!baseURL || isAbsoluteUrl(url)) {
+    return url;
+  }
+
+  return `${baseURL.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}`;
 };
 
 const normalizeHeaders = (headers: HttpHeaders = {}): HttpHeaders => {
@@ -317,6 +325,8 @@ const parseResponseBody = <T>(response: RawResponse, responseType: ResponseType)
 };
 
 const isRedirectStatus = (status: number): boolean => [301, 302, 303, 307, 308].includes(status);
+
+const isAbsoluteUrl = (url: string): boolean => /^[a-z][a-z\d+\-.]*:\/\//i.test(url);
 
 const defaultClient = new HttpClient();
 

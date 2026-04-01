@@ -7,6 +7,7 @@
 - Removed the `axios` dependency in favor of an internal Node HTTP client with explicit JSON, text, binary, timeout, and redirect handling.
 - Kept Deezer, Tidal, Spotify, YouTube, artwork, and Musixmatch requests on the same public library surface while making the transport layer dependency-light for publish.
 - Updated the README download example and integration tests to use buffer-safe native Node networking instead of axios.
+- Added a published `types/` subpath so consumers can resolve shared declarations from `@soulwax/d-fi-core/types`.
 
 ### Fixed
 
