@@ -77,13 +77,15 @@ export class HttpClient {
     timeout: number;
   };
 
-  constructor(defaults: {
-    baseURL?: string;
-    headers?: HttpHeaders;
-    maxRedirects?: number;
-    params?: HttpQuery;
-    timeout?: number;
-  } = {}) {
+  constructor(
+    defaults: {
+      baseURL?: string;
+      headers?: HttpHeaders;
+      maxRedirects?: number;
+      params?: HttpQuery;
+      timeout?: number;
+    } = {},
+  ) {
     this.defaults = {
       baseURL: defaults.baseURL,
       headers: defaults.headers ? normalizeHeaders(defaults.headers) : {},

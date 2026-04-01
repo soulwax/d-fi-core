@@ -30,7 +30,12 @@ export const getLyricsMusixmatch = async (query: string): Promise<string> => {
     },
   });
 
-  let lyrics = data.match(/("body":".*","language")/)[0];
+  const lyricsMatch = data.match(/("body":".*","language")/);
+  if (!lyricsMatch) {
+    throw new Error('No lyrics found!');
+  }
+
+  let lyrics = lyricsMatch[0];
   lyrics = lyrics.replace('"body":"', '').replace('","language"', '');
 
   return lyrics.split('\\n').join('\n');

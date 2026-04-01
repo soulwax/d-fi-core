@@ -42,7 +42,9 @@ export const spotifyApi = new SpotifyWebApi();
  * @returns {tokensType}
  */
 export const setSpotifyAnonymousToken = async () => {
-  const data = await getJson<tokensType>('https://open.spotify.com/get_access_token?reason=transport&productType=embed');
+  const data = await getJson<tokensType>(
+    'https://open.spotify.com/get_access_token?reason=transport&productType=embed',
+  );
   spotifyApi.setAccessToken(data.accessToken);
   return data;
 };

@@ -69,8 +69,7 @@ const requestWithRetry = async <T>(
   body?: unknown,
   config: DeezerRequestConfig = {},
 ): Promise<HttpResponse<T>> => {
-  const response =
-    method === 'POST' ? await instance.post<T>(url, body, config) : await instance.get<T>(url, config);
+  const response = method === 'POST' ? await instance.post<T>(url, body, config) : await instance.get<T>(url, config);
   const error = (response.data as any)?.error as DeezerResponseError | undefined;
 
   if (!error || Object.keys(error).length === 0) {
