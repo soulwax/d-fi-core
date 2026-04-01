@@ -1,5 +1,5 @@
-import axios from 'axios';
 import FastLRU from '../lib/fast-lru';
+import {getBuffer} from '../lib/http';
 import type {trackType} from '../types';
 
 type coverSize = 56 | 250 | 500 | 1000 | 1500 | 1800 | number;
@@ -27,7 +27,7 @@ export const downloadAlbumCover = async (track: trackType, albumCoverSize: cover
 
   try {
     const url = `https://e-cdns-images.dzcdn.net/images/cover/${track.ALB_PICTURE}/${albumCoverSize}x${albumCoverSize}-000000-80-0-0.jpg`;
-    const {data} = await axios.get<any>(url, {responseType: 'arraybuffer'});
+    const data = await getBuffer(url);
     lru.set(track.ALB_PICTURE + albumCoverSize, data);
     return data;
   } catch (err) {

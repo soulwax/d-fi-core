@@ -1,16 +1,33 @@
-import axios from 'axios';
 import delay from 'delay';
 import {getAlbumInfo, getAlbumTracks, getTrackInfo} from '../api';
+import {HttpClient} from '../lib/http';
 import type {albumType, trackType} from '../types';
 
-const instance = axios.create({baseURL: 'https://api.deezer.com/', timeout: 15000});
+const instance = new HttpClient({baseURL: 'https://api.deezer.com/', timeout: 15000});
+
+type DeezerLookup = {
+  error?: {
+    code?: number;
+  };
+  id: string;
+};
+
+const requestLookup = async (path: string): Promise<DeezerLookup> => {
+  const {data} = await instance.get<DeezerLookup>(path);
+  if (data.error && data.error.code === 4) {
+    await delay.range(1000, 1500);
+    return await requestLookup(path);
+  }
+
+  return data;
+};
 
 export const isrc2deezer = async (name: string, isrc?: string) => {
   if (!isrc) {
     throw new Error('ISRC code not found for ' + name);
   }
 
-  const {data} = await instance.get<any>('track/isrc:' + isrc);
+  const data = await requestLookup('track/isrc:' + isrc);
   if (data.error) {
     throw new Error(`No match on deezer for ${name} (ISRC: ${isrc})`);
   }
@@ -25,7 +42,7 @@ export const upc2deezer = async (name: string, upc?: string): Promise<[albumType
     upc = upc.slice(-12);
   }
 
-  const {data} = await instance.get<any>('album/upc:' + upc);
+  const data = await requestLookup('album/upc:' + upc);
   if (data.error) {
     throw new Error(`No match on deezer for ${name} (UPC: ${upc})`);
   }
@@ -34,15 +51,3 @@ export const upc2deezer = async (name: string, upc?: string): Promise<[albumType
   const albumTracks = await getAlbumTracks(data.id);
   return [albumInfo, albumTracks.data];
 };
-
-// Retry on rate limit error
-instance.interceptors.response.use(async (response: Record<string, any>) => {
-  if (response.data.error && Object.keys(response.data.error).length > 0) {
-    if (response.data.error.code === 4) {
-      await delay.range(1000, 1500);
-      return await instance(response.config);
-    }
-  }
-
-  return response;
-});

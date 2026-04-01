@@ -1,5 +1,5 @@
-import axios from 'axios';
 import {getSongFileName} from '../lib/decrypt';
+import {headRequest} from '../lib/http';
 import instance from '../lib/request';
 import type {trackType} from '../types';
 
@@ -144,7 +144,7 @@ export const getTrackDownloadUrl = async (
 
 const testUrl = async (url: string): Promise<number> => {
   try {
-    const {headers} = await axios.head(url);
+    const {headers} = await headRequest(url);
     return Number(headers['content-length']);
   } catch (err) {
     return 0;

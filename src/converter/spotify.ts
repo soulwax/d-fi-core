@@ -1,7 +1,7 @@
-import axios from 'axios';
 import SpotifyWebApi from 'spotify-web-api-node';
 import PQueue from 'p-queue';
 import {isrc2deezer, upc2deezer} from './deezer';
+import {getJson} from '../lib/http';
 import type {playlistInfo, trackType} from '../types';
 
 // type spotifyTypes = 'track' | 'episode' | 'album' | 'artist' | 'playlist' | 'show';
@@ -42,9 +42,7 @@ export const spotifyApi = new SpotifyWebApi();
  * @returns {tokensType}
  */
 export const setSpotifyAnonymousToken = async () => {
-  const {data} = await axios.get<tokensType>(
-    'https://open.spotify.com/get_access_token?reason=transport&productType=embed',
-  );
+  const data = await getJson<tokensType>('https://open.spotify.com/get_access_token?reason=transport&productType=embed');
   spotifyApi.setAccessToken(data.accessToken);
   return data;
 };

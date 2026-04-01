@@ -1,6 +1,6 @@
-import axios from 'axios';
 import PQueue from 'p-queue';
 import {isrc2deezer, upc2deezer} from './deezer';
+import {HttpClient} from '../lib/http';
 import type {playlistInfo, trackType} from '../types';
 
 interface commonType {
@@ -79,7 +79,7 @@ interface tidalPlaylistTracksType extends listType {
   items: tidalTrackType[];
 }
 
-const client = axios.create({
+const client = new HttpClient({
   baseURL: 'https://api.tidal.com/v1/',
   timeout: 15000,
   headers: {

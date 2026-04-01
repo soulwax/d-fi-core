@@ -1,12 +1,19 @@
-import axios from 'axios';
 import delay from 'delay';
+import type {HttpQuery, HttpResponse} from './http';
+import {HttpClient} from './http';
 
 let user_arl =
   'c973964816688562722418b5200c1515dffaad15a42643ebf87cc72824a54612ec51c2ad42d566743f9e424c774e98ccae7737770acff59251328e6cd598c7bcac38ca269adf78bfb88ec5bbad6cd800db3c0b88b2af645bb22b99e71de26416';
 
-const instance = axios.create({
+type DeezerResponseError = Record<string, any>;
+
+type DeezerRequestConfig = {
+  headers?: Record<string, string>;
+  params?: HttpQuery;
+};
+
+const instance = new HttpClient({
   baseURL: 'https://api.deezer.com/1.0',
-  withCredentials: true,
   timeout: 15000,
   headers: {
     Accept: '*/*',
@@ -56,24 +63,45 @@ export const initDeezerApi = async (arl: string): Promise<string> => {
 
 let token_retry = 0;
 
-// Add a request interceptor
-instance.interceptors.response.use(async (response: Record<string, any>) => {
-  if (response.data.error && Object.keys(response.data.error).length > 0) {
-    if (response.data.error.NEED_API_AUTH_REQUIRED) {
-      await initDeezerApi(user_arl);
-      return await instance(response.config);
-    } else if (response.data.error.code === 4) {
-      await delay.range(1000, 1500);
-      return await instance(response.config);
-    } else if (response.data.error.GATEWAY_ERROR || (response.data.error.VALID_TOKEN_REQUIRED && token_retry < 15)) {
-      await getApiToken();
-      // Prevent dead loop
-      token_retry += 1;
-      return await instance(response.config);
-    }
+const requestWithRetry = async <T>(
+  method: 'GET' | 'POST',
+  url: string,
+  body?: unknown,
+  config: DeezerRequestConfig = {},
+): Promise<HttpResponse<T>> => {
+  const response =
+    method === 'POST' ? await instance.post<T>(url, body, config) : await instance.get<T>(url, config);
+  const error = (response.data as any)?.error as DeezerResponseError | undefined;
+
+  if (!error || Object.keys(error).length === 0) {
+    token_retry = 0;
+    return response;
   }
 
-  return response;
-});
+  if (error.NEED_API_AUTH_REQUIRED) {
+    await initDeezerApi(user_arl);
+    return await requestWithRetry<T>(method, url, body, config);
+  }
 
-export default instance;
+  if (error.code === 4) {
+    await delay.range(1000, 1500);
+    return await requestWithRetry<T>(method, url, body, config);
+  }
+
+  if (error.GATEWAY_ERROR || (error.VALID_TOKEN_REQUIRED && token_retry < 15)) {
+    token_retry += 1;
+    await getApiToken();
+    return await requestWithRetry<T>(method, url, body, config);
+  }
+
+  token_retry = 0;
+  return response;
+};
+
+export default {
+  defaults: instance.defaults,
+  get: async <T>(url: string, config: DeezerRequestConfig = {}): Promise<HttpResponse<T>> =>
+    await requestWithRetry<T>('GET', url, undefined, config),
+  post: async <T>(url: string, body?: unknown, config: DeezerRequestConfig = {}): Promise<HttpResponse<T>> =>
+    await requestWithRetry<T>('POST', url, body, config),
+};

@@ -1,7 +1,7 @@
 import test from 'ava';
-import axios from 'axios';
 import * as api from '../src';
 import {decryptDownload} from '../src/lib/decrypt';
+import {getBuffer} from '../src/lib/http';
 import {downloadAlbumCover} from '../src/metadata-writer/abumCover';
 import {getLyricsMusixmatch} from '../src/metadata-writer/musixmatchLyrics';
 import {getTrackDownloadUrl} from '../src/lib/get-url';
@@ -148,7 +148,7 @@ if (process.env.CI) {
     const track = await api.getTrackInfo(SNG_ID);
     const trackData = await getTrackDownloadUrl(track, 1);
     if (!trackData) throw new Error('Selected track+quality are unavailable');
-    const {data} = await axios.get<Buffer>(trackData.trackUrl, {responseType: 'arraybuffer'});
+    const data = await getBuffer(trackData.trackUrl);
 
     t.truthy(data);
     t.true(Buffer.isBuffer(data));
@@ -188,7 +188,7 @@ if (process.env.CI) {
     const track = await api.getTrackInfo(SNG_ID);
     const trackData = await getTrackDownloadUrl(track, 3);
     if (!trackData) throw new Error('Selected track+quality are unavailable');
-    const {data} = await axios.get<Buffer>(trackData.trackUrl, {responseType: 'arraybuffer'});
+    const data = await getBuffer(trackData.trackUrl);
 
     t.truthy(data);
     t.true(Buffer.isBuffer(data));
@@ -207,7 +207,7 @@ if (process.env.CI) {
     const track = await api.getTrackInfo(SNG_ID);
     const trackData = await getTrackDownloadUrl(track, 9);
     if (!trackData) throw new Error('Selected track+quality are unavailable');
-    const {data} = await axios.get<Buffer>(trackData.trackUrl, {responseType: 'arraybuffer'});
+    const data = await getBuffer(trackData.trackUrl);
 
     t.truthy(data);
     t.true(Buffer.isBuffer(data));

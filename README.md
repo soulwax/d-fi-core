@@ -15,9 +15,19 @@ yarn add @soulwax/d-fi-core
 Here's a simple example to download tracks.
 
 ```ts
-import axios from 'axios';
 import fs from 'fs';
+import {get} from 'https';
 import * as api from '@soulwax/d-fi-core';
+
+const downloadBuffer = (url: string) =>
+  new Promise<Buffer>((resolve, reject) => {
+    get(url, (response) => {
+      const chunks: Buffer[] = [];
+      response.on('data', (chunk) => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
+      response.on('end', () => resolve(Buffer.concat(chunks)));
+      response.on('error', reject);
+    }).on('error', reject);
+  });
 
 // Init api with arl from cookie
 await api.initDeezerApi(arl_cookie);
@@ -39,7 +49,7 @@ const track = await api.getTrackInfo(song_id);
 const trackData = await api.getTrackDownloadUrl(track, 1);
 
 // Download track
-const {data} = await axios.get(trackData.trackUrl, {responseType: 'arraybuffer'});
+const data = await downloadBuffer(trackData.trackUrl);
 
 // Decrypt track if needed
 const outFile = trackData.isEncrypted ? api.decryptDownload(data, track.SNG_ID) : data;

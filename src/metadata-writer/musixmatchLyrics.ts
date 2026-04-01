@@ -1,11 +1,11 @@
-import axios from 'axios';
 import {parse} from 'node-html-parser';
+import {getText} from '../lib/http';
 import {randomUseragent} from './useragents';
 
 const baseUrl = 'https://musixmatch.com';
 
 const getUrlMusixmatch = async (query: string) => {
-  const {data} = await axios.get<any>(`${baseUrl}/search/${encodeURI(query)}/tracks`, {
+  const data = await getText(`${baseUrl}/search/${encodeURI(query)}/tracks`, {
     headers: {
       'User-Agent': randomUseragent(),
       referer: 'https://l.facebook.com/',
@@ -23,7 +23,7 @@ const getUrlMusixmatch = async (query: string) => {
 
 export const getLyricsMusixmatch = async (query: string): Promise<string> => {
   const url = await getUrlMusixmatch(query);
-  const {data} = await axios.get<any>(url, {
+  const data = await getText(url, {
     headers: {
       'User-Agent': randomUseragent(),
       referer: baseUrl + '/',

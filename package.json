@@ -1,6 +1,6 @@
 {
   "name": "@soulwax/d-fi-core",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Core module for d-fi.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -32,7 +32,6 @@
   "author": "Christian Kling",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "axios": "^0.26.1",
     "browser-id3-writer": "^4.4.0",
     "delay": "^5.0.0",
     "node-html-parser": "^5.3.3",
